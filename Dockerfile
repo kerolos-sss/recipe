@@ -34,6 +34,7 @@ RUN if [ "$DEV" = "true" ]; then \
     else \
     echo "Running in production mode"; \
     fi
+RUN export PATH="/py/bin:$PATH"
 
 USER django-user
 # Copy project
@@ -41,7 +42,7 @@ COPY app/ /app/
 # Expose port 8000
 EXPOSE 8000
 RUN source /py/bin/activate
-RUN PATH="/py/bin:$PATH"
+RUN export PATH="/py/bin:$PATH"
 
 # Run the Django development server
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "recipe.wsgi:application"]
