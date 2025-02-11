@@ -2,19 +2,22 @@
 Database models for the core app.
 """
 
-from django.db import models # noqa
+from django.db import models  # noqa
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
-    PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 
 
 class UserManager(BaseUserManager):
     """Manager for user profiles."""
-    
+
     def create_user(self, email, password=None, **extra_fields):
         """Create a new user profile."""
-        if not email or email.strip() == '':
-            raise ValueError('Users must have an email address.')
+        if not email or email.strip() == "":
+            raise ValueError("Users must have an email address.")
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -40,4 +43,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
