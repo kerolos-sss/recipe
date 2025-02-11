@@ -19,7 +19,7 @@ class CommandTests(SimpleTestCase):
 
     @patch("time.sleep")
     def test_wait_for_db_delay(self, _mocked_sleep, mocked_check):
-        """Test waiting for db when getting OperationalError 5 times then it's ready"""
+        """Test waiting for db when getting OperationalError 5 times"""
         mocked_check.side_effect = (
             [Psycopg2OperationalError] * 3 + [OperationalError] * 2 + [True]
         )
