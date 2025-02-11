@@ -20,6 +20,9 @@ RUN adduser --disabled-password --no-create-home django-user
 # Install Python dependencies
 COPY requirements.txt /app/
 RUN python -m venv /py \
+    && apk add --update --no-cache postgresql-client \
+    && apk add --no-cache --virtual .build-deps \
+        build-base musl-dev postgresql-dev \
     && /py/bin/pip install --upgrade pip \
     && /py/bin/pip install -r requirements.txt
 
@@ -33,16 +36,15 @@ RUN if [ "$DEV" = "true" ]; then \
     /py/bin/pip install -r requirements-dev.txt ; \
     else \
     echo "Running in production mode"; \
-    fi
-RUN export PATH="/py/bin:$PATH"
+    fi \ 
+    && apk del .build-deps
+ENV PATH="/py/bin:$PATH"
 
 USER django-user
 # Copy project
 COPY app/ /app/
 # Expose port 8000
 EXPOSE 8000
-RUN source /py/bin/activate
-RUN export PATH="/py/bin:$PATH"
 
 # Run the Django development server
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "recipe.wsgi:application"]
